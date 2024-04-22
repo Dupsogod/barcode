@@ -1,0 +1,282 @@
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+
+    <link href="/wfmbranch/Documents/barcode/dist/datepicker.min.css?v=1.0" rel="stylesheet" type="text/css" />
+    <link href="/wfmbranch/Documents/barcode/dist/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/wfmbranch/Documents/barcode/style.css" rel="stylesheet" type="text/css" />
+    
+    <script charset="windows-1251" src="/wfmbranch/Documents/barcode/dist/datepicker.min.js?v=1.4"></script>
+    <script src="/wfmbranch/Documents/barcode/dist/jspdf.min.js?v=1.3"></script>
+    <script src="/wfmbranch/Documents/barcode/dist/bwip-js-min.js?v=1.3"></script>
+    <script src="/wfmbranch/Documents/barcode/dist/printThis.js?v=1.0"></script>
+    <script src="/wfmbranch/Documents/barcode/dist/jquery-qr.min.js"></script>
+    <script src="/wfmbranch/Documents/barcode/dist/deflate.js?v=1.1"></script>
+    <script src="/wfmbranch/Documents/barcode/dist/inflate.js"></script>
+
+<!--[if gte mso 9]><xml>
+<mso:CustomDocumentProperties>
+<mso:_dlc_DocId msdt:dt="string">RENC-174005774-31</mso:_dlc_DocId>
+<mso:_dlc_DocIdItemGuid msdt:dt="string">b0560a87-ccb1-441b-8887-379aef6e5f41</mso:_dlc_DocIdItemGuid>
+<mso:_dlc_DocIdUrl msdt:dt="string">https://intranet.rencredit.ru/wfmbranch/_layouts/15/DocIdRedir.aspx?ID=RENC-174005774-31, RENC-174005774-31</mso:_dlc_DocIdUrl>
+</mso:CustomDocumentProperties>
+</xml><![endif]-->
+</head>
+</html>
+
+<main class="col-12" style="overflow-x: hidden">
+    <div class="row mb-5 mt-5 main-margin">
+        <div class="col-3" style="padding: 10px; border: 1px solid darkgrey">
+            <h5 onclick="changeTab('firstTab', 'secondTab')" id="documentHeader" class="pointer w-100 mb-0 text-center" style="color: #3498DB">ДЕЛО С КАССОВЫМИ ДОКУМЕНТАМИ</h5>
+        </div>
+        <div class="col-3" style="padding: 10px; border: 1px solid darkgrey">
+            <h5 onclick="changeTab('secondTab', 'firstTab')" id="documentHeader2" class="pointer w-100 mb-0 text-center">ФОРМА ЗАЯВКИ НА ОПИСЬ</h5>
+        </div>
+    </div>
+    <div id="firstTab">
+        <div class="row main-margin">
+            <div class="col-4">
+                <p id="firstStepText1">Выберите отделение:</p>
+                <div class="search">
+                    <input id="pointsInput1"
+                           onclick="document.getElementById('pointsDropdown1').hasChildNodes() ? $('#pointsDropdown1').removeClass('d-none') : $('#pointsDropdown1').addClass('d-none')"
+                           oninput="filterPoints(1)" type="text" class="search-field"
+                           placeholder="Начните набирать название отделения">
+                    <img src="/wfmbranch/Documents/barcode/img/search.svg" alt="" class="search-icon">
+                </div>
+                <div id="pointsDropdown1" class="d-none position-absolute" style="z-index: 9999; background: #dddddd; width: 315px; margin-left: 35px; border: 1px solid darkgrey; padding-top: 20px; padding-bottom: 20px; max-height: 400px; overflow-y: scroll"></div>
+                <p class="mt-2" id="office"></p>
+            </div>
+            <div class="col-1 ghost-div"></div>
+            <div class="col-4">
+                <div class="row mb-2 ml-0">
+                    <p id="secondStepText1" class="col-3">Дата описи:</p>
+                    <p id="date" class="col-3"></p>
+                </div>
+                <div class="datepicker-here"></div>
+            </div>
+        </div>
+        <div class="row main-margin justify-content-between mb-5 mt-5 w-50">
+            <div class="col-3">
+                <div class="row">
+                    <label id="thirdStepText1" class="p-0" for="officeCode">Код офиса:</label>
+                    <input class="" id="officeCode" disabled/>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="row">
+                    <label id="fourthStepText1" class="p-0" for="dateCode">Код даты:</label>
+                    <input class="" id="dateCode" disabled/>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="row">
+                    <label style="color: red" id="fifthStepText1" class="p-0" for="summaryCode">Общий код:</label>
+                    <input class="" id="summaryCode" disabled/>
+                </div>
+            </div>
+        </div>
+        <div class="row w-50 justify-content-center main-margin mb-3">
+            <div class="col-4 text-center">
+                <button onclick="formBarcode()" id="successButton" class="btn btn-primary"
+                        style="display: none">
+                    Сформировать
+                </button>
+            </div>
+        </div>
+        <div class="row w-50 justify-content-center main-margin mb-3">
+            <div class="col-4 text-center">
+                <button onclick="printPage()" id="printButton" class="btn btn-primary" style="display: none">
+                    Печать
+                </button>
+            </div>
+        </div>
+        <div class="row w-50 justify-content-center main-margin mb-3">
+            <div class="col-6 text-center">
+                <img class="w-100" style="display: none" id="barcodeImage" src="" alt=""/>
+            </div>
+        </div>
+        <div class="d-none">
+            <div id="printable">
+                <h2 class="text-center" style="margin-top: 300px; font-weight: normal">ДЕЛО С КАССОВЫМИ БУМАГАМИ</h2>
+                <h5 id="printOffice" class="text-center mt-3" style="font-weight: bold"></h5>
+                <p class="mt-5 text-center" style="font-size: 22px">Дата дела</p>
+                <p id="printDate" class="mt-3 text-center" style="font-size: 22px; font-weight: bold"></p>
+                <img height="65px" width="135px" style="margin-top: 340px" id="printBarcode" src="" alt=""/>
+            </div>
+        </div>
+    </div>
+    <div class="d-none" id="secondTab">
+        <div class="row main-margin">
+            <div class="col-4">
+                <p id="firstStepText">Выберите отделение:</p>
+                <div class="search">
+                    <input id="pointsInput"
+                           onclick="document.getElementById('pointsDropdown').hasChildNodes() ? $('#pointsDropdown').removeClass('d-none') : $('#pointsDropdown').addClass('d-none')"
+                           oninput="filterPoints()" type="text" class="search-field"
+                           placeholder="Начните набирать название отделения">
+                    <img src="/wfmbranch/Documents/barcode/img/search.svg" alt="" class="search-icon">
+                </div>
+                <div id="pointsDropdown" class="d-none position-absolute" style="z-index: 9999; background: #dddddd; width: 315px; margin-left: 35px; border: 1px solid darkgrey; padding-top: 20px; padding-bottom: 20px; max-height: 400px; overflow-y: scroll">
+
+                </div>
+                <p class="mt-2" id="officeSecondTab"></p>
+                <div class="row">
+                    <div class="col-5">
+                        <p class="mt-2" id="kicSberbank"></p>
+                        <input id="kicInput" type="text" placeholder="КИЦ" class="d-none">
+                    </div>
+                    <div class="col-1 edit-wrapper d-none">
+                        <img id="edit1" onclick="editInfo(1)" class="pointer" style="width: 20px !important; height: auto" src="/wfmbranch/Documents/barcode/img/draw.png" />
+                        <img id="close1" onclick="editInfo(3)" class="pointer d-none" style="width: 20px !important; height: auto" src="/wfmbranch/Documents/barcode/img/x.png" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-5">
+                        <p class="mt-2 mb-5" id="ink"></p>
+                        <input id="inkInput" type="text" placeholder="ИНК" class="d-none">
+                    </div>
+                    <div class="col-1 edit-wrapper d-none">
+                        <img id="edit2" onclick="editInfo(2)" class="pointer" style="width: 20px !important; height: auto" src="/wfmbranch/Documents/barcode/img/draw.png" />
+                        <img id="close2" onclick="editInfo(4)" class="pointer d-none" style="width: 20px !important; height: auto" src="/wfmbranch/Documents/barcode/img/x.png" />
+                    </div>
+                </div>
+
+                <p>
+                    Сотрудник:
+                    <br>
+                    ФИО сотрудника который передает инкассаторскую сумку/сейф-пакет инкассатору
+                </p>
+                <div id="groupEmployeesBlock">
+                    <select id="employeesSelect" class="mb-2"></select>
+                    <div class="row ml-0 justify-content-left">
+                        <button onclick="changeEmployeesSearch(1)" class="btn btn-primary mb-5 col-7">Искать среди всех сотрудников</button>
+                    </div>
+                </div>
+                <div id="allEmployeesBlock" class="d-none">
+                    <p id="searchedEmployee" class="mb-2"></p>
+                    <div class="search">
+                        <input id="allEmployeesInput"
+                               onclick="document.getElementById('allEmployeesDropdown').hasChildNodes() ? $('#allEmployeesDropdown').removeClass('d-none') : $('#allEmployeesDropdown').addClass('d-none')"
+                               oninput="filterEmployees()" type="text" class="search-field"
+                               placeholder="Начните набирать ФИО сотрудника">
+                        <img src="/wfmbranch/Documents/barcode/img/search.svg" alt="" class="search-icon">
+                    </div>
+                    <div id="allEmployeesDropdown" class="d-none position-absolute" style="z-index: 9999; background: #dddddd; width: 315px; margin-left: 35px; border: 1px solid darkgrey; padding-top: 20px; padding-bottom: 20px; max-height: 400px; overflow-y: scroll">
+
+                    </div>
+                    <div class="row ml-0 justify-content-left mt-2">
+                        <button onclick="changeEmployeesSearch(2)" class="btn btn-primary mb-5 col-8">Искать среди сотрудников отделения</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1 ghost-div"></div>
+            <div class="col-4">
+                <div class="row mb-2 ml-0">
+                    <p id="secondStepText" class="col-3">Дата инкассации:</p>
+                    <p id="secondTabDate" class="col-3"></p>
+                </div>
+                <div class="datepicker-here-second"></div>
+            </div>
+        </div>
+        <div class="row main-margin mt-5">
+            <p class="">Выберите тип:</p>
+            <div class="form-check col-1" style="margin-left: 40px" oninput="changeRadioValue('package')">
+                <input class="custom-checkbox" type="radio" name="radios" id="radioOne" value="package" checked>
+                <label class="form-check-label" for="radioOne">
+                    Сейф-пакет
+                </label>
+            </div>
+            <div class="form-check col-2" oninput="changeRadioValue('bag')">
+                <input class="custom-checkbox" type="radio" name="radios" id="radioTwo" value="bag">
+                <label class="form-check-label" for="radioTwo">
+                    Инкассаторская сумка
+                </label>
+            </div>
+        </div>
+
+        <div class="row main-margin mt-5">
+            <div id="bagBlock" class="form-group col-3" style="max-width: 300px">
+                <label id="thirdStepText" for="cashInput">Направляем денежную наличность, вложенную в сейф-пакет №</label>
+                <input type="number" class="form-control" id="cashInput" />
+            </div>
+            <div class="d-none col-6" id="sealBlock">
+                <div class="row">
+                    <div class="form-group" style="max-width: 300px">
+                        <label id="fourthStepText" for="sealOne">Опломбированную(ые) пломбиром (ами)№1</label>
+                        <input type="number" class="form-control" id="sealOne"/>
+                    </div>
+                    <div class="form-group" style="max-width: 300px">
+                        <label id="fifthStepText" for="sealTwo">Опломбированную(ые) пломбиром (ами)№2</label>
+                        <input type="number" class="form-control" id="sealTwo"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-5 mt-5 main-margin">
+            <div id="denominationContainer" class="col-12">
+                <div class="form-group row w-75">
+                    <div class="col-2">
+                        <label class="adaptive-height">Выберите валюту</label>
+                        <select id="selectCurrency" class="form-control"></select>
+                    </div>
+                    <div class="col-2">
+                        <label class="adaptive-height">Код валюты:</label>
+                        <input id="cashCode" class="form-control" disabled />
+                    </div>
+                    <div class="col-3">
+                        <label class="adaptive-height">Номинал:</label>
+                        <select onchange="calculateSum(event)" id="denomination0" class="form-control"></select>
+                    </div>
+                    <div class="col-2">
+                        <label id="sixthStepText0" class="adaptive-height">Количество по номиналу:</label>
+                        <input oninput="calculateSum(event)" type="number" class="form-control" id="denominationCount0"/>
+                    </div>
+                    <div class="col-3">
+                        <label class="adaptive-height">Сумма по номиналу:</label>
+                        <input disabled type="number" class="form-control" id="denominationSum0"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mt-3">
+                <div class="row w-75">
+                    <div class="col-4"></div>
+                    <div class="col-3">
+                        <div onclick="addDenomination(event)" class="row mx-0 pointer">
+                            <img class="col px-0" style="max-width: 30px" src="/wfmbranch/Documents/barcode/img/plus.svg" />
+                            <p class="mb-0 col">Добавить номинал</p>
+                        </div>
+                        <div onclick="removeDenomination()" class="row mt-3 mx-0 pointer">
+                            <img class="col px-0" style="max-width: 30px" src="/wfmbranch/Documents/barcode/img/minus.svg" />
+                            <p class="mb-0 col">Убрать номинал</p>
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col-3">
+                        <label>Общая сумма:</label>
+                        <input disabled type="number" class="form-control" id="sum"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-5 justify-content-center" style="margin-top: 100px">
+            <div class="col-4 text-center">
+                <button onclick="send(1)" class="btn btn-primary">Сгенерировать (наш сервис)</button>
+                <button onclick="send(2)" class="btn btn-primary">Сгенерировать</button>
+            </div>
+        </div>
+
+        <div class="row mb-5 justify-content-center" style="margin-top: 100px">
+            <div class="col-12 text-center">
+                <img id="dataMatrixImage" class="d-none" />
+            </div>
+            <div id="jqueryQr" class="col-12 text-center">
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="/wfmbranch/Documents/barcode/script.js?v=2.4"></script>
